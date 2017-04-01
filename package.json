@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/scottbedard/oc-shop-api/issues"
   },
-  "homepage": "https://github.com/scottbedard/oc-shop-api#readme"
+  "homepage": "https://github.com/scottbedard/oc-shop-api#readme",
+  "peerDependencies": {
+    "axios": "^0.16.0"
+  }
 }
