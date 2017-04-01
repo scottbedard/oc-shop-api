@@ -1,0 +1,19 @@
+{
+  "name": "oc-shop-api",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scottbedard/oc-shop-api.git"
+  },
+  "author": "Scott Bedard",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scottbedard/oc-shop-api/issues"
+  },
+  "homepage": "https://github.com/scottbedard/oc-shop-api#readme"
+}
