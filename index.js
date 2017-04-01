@@ -33,6 +33,21 @@ module.exports = {
     },
 
     /**
+     * Find a product.
+     *
+     * @param  {string}     slug
+     * @param  {Object}     params
+     * @return {Promise}
+     */
+    findProduct: function(slug, params = {}) {
+        if (typeof params.with !== 'undefined') {
+            params.with = convertToCsv(params.with);
+        }
+
+        return axios.get(this.host + '/api/bedard/shop/products/' + slug, { params });
+    },
+
+    /**
      * Get categories.
      *
      * @param  {Object}     params
