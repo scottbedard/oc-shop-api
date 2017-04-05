@@ -60,4 +60,14 @@ module.exports = {
 
         return axios.get(this.host + '/api/bedard/shop/categories', { params });
     },
+
+    /**
+     * Get products.
+     *
+     * @param  {Object}     params
+     * @return {Promise}
+     */
+    getProducts: function(params = {}) {
+        return axios.get(this.host + '/api/bedard/shop/products', { params });
+    },
 };
