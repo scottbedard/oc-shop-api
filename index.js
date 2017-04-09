@@ -1,73 +1,50 @@
-var axios = require('axios');
+'use strict';
 
-var convertToCsv = function(value) {
-    if (Array.isArray(value)) {
-        value = value.map(string => string.trim()).join(',');
-    }
+var ShopRepository = require('./repository');
 
-    return value;
-};
+exports.sync = function(store, options) {
+    var moduleName = (options || {}).moduleName || 'shop';
 
-module.exports = {
+    store.registerModule(moduleName, {
 
-    /**
-     * API Host
-     *
-     * @type {String}
-     */
-    host: '',
+        //
+        // actions
+        //
+        actions: {
+            addToCart: function(context, inventoryId, quantity) {
+                return ShopRepository.addToCart(inventoryId, quantity).then(response => {
+                    context.commit('setCartItem', response.data);
+                });
+            },
+        },
 
-    /**
-     * Find a category by slug.
-     *
-     * @param  {string}     slug
-     * @param  {object}     params
-     * @return {Promise}
-     */
-    findCategory: function(slug, params = {}) {
-        if (typeof params.with !== 'undefined') {
-            params.with = convertToCsv(params.with);
-        }
+        //
+        // mutations
+        //
+        mutations: {
+            setCartItem: function(context, data) {
+                var item = context.cart.items.find(function(item) {
+                    return item.id == data.id;
+                });
 
-        return axios.get(this.host + '/api/bedard/shop/categories/' + slug, { params });
-    },
+                if (! item || data.updated_at > item.updated_at) {
+                    context.cart.items.push(data);
+                }
+            },
+        },
 
-    /**
-     * Find a product.
-     *
-     * @param  {string}     slug
-     * @param  {Object}     params
-     * @return {Promise}
-     */
-    findProduct: function(slug, params = {}) {
-        if (typeof params.with !== 'undefined') {
-            params.with = convertToCsv(params.with);
-        }
+        //
+        // namespaced
+        //
+        namespaced: true,
 
-        return axios.get(this.host + '/api/bedard/shop/products/' + slug, { params });
-    },
-
-    /**
-     * Get categories.
-     *
-     * @param  {Object}     params
-     * @return {Promise}
-     */
-    getCategories: function(params = {}) {
-        if (typeof params.with !== 'undefined') {
-            params.with = convertToCsv(params.with);
-        }
-
-        return axios.get(this.host + '/api/bedard/shop/categories', { params });
-    },
-
-    /**
-     * Get products.
-     *
-     * @param  {Object}     params
-     * @return {Promise}
-     */
-    getProducts: function(params = {}) {
-        return axios.get(this.host + '/api/bedard/shop/products', { params });
-    },
+        //
+        // state
+        //
+        state: {
+            cart: {
+                items: [],
+            },
+        },
+    });
 };
