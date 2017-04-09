@@ -1,6 +1,6 @@
 {
   "name": "oc-shop-api",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/scottbedard/oc-shop-api#readme",
   "peerDependencies": {
-    "axios": "^0.16.0"
+    "axios": "^0.16.0",
+    "vuex": "^2.2.1"
   }
 }
