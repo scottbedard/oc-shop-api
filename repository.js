@@ -95,4 +95,22 @@ module.exports = {
     getProducts: function(params = {}) {
         return axios.get(this.host + '/api/bedard/shop/products', { params });
     },
+
+    /**
+     * Remove an item from the cart.
+     *
+     * @param  {Number}     itemId
+     * @return {Promise}
+     */
+    removeFromCart: function(itemId) {
+        console.log(itemId);
+        return axios.delete(this.host + '/api/bedard/shop/cart/item', {
+            data: {
+                itemId,
+            },
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+    }
 };

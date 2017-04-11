@@ -2,6 +2,3 @@
 # yarn lockfile v1
 
 
-vuex@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/vuex/-/vuex-2.2.1.tgz#a42d0ce18cb0e0359258f84bfd76835ed468c185"

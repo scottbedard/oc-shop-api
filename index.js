@@ -20,13 +20,23 @@ exports.sync = function(store, options = {}) {
                 return ShopRepository.getCart().then(response => {
                     context.commit('updateCart', response.data);
                 });
-            }
+            },
+            removeFromCart(context, itemId) {
+                return new Promise(resolve => {
+                    ShopRepository.removeFromCart(itemId).then(response => {
+                        context.dispatch('refreshCart').then(resolve);
+                    });
+                });
+            },
         },
 
         //
         // getters
         //
         getters: {
+            cartIsEmpty(state, getters) {
+                return getters.itemsInCart <= 0;
+            },
             itemsInCart(state, getters) {
                 if (typeof state.cart !== 'object' || ! Array.isArray(state.cart.items)) {
                     return 0;
