@@ -59,6 +59,20 @@ module.exports = {
     },
 
     /**
+     * Get the current cart.
+     *
+     * @param  {Object}     params
+     * @return {Promise}
+     */
+    getCart: function(params = {}) {
+        if (typeof params.with !== 'undefined') {
+            params.with = convertToCsv(params.with);
+        }
+
+        return axios.get(this.host + '/api/bedard/shop/cart', { params });
+    },
+
+    /**
      * Get categories.
      *
      * @param  {Object}     params

@@ -1,9 +1,7 @@
-'use strict';
-
 var ShopRepository = require('./repository');
 
-exports.sync = function(store, options) {
-    var moduleName = (options || {}).moduleName || 'shop';
+exports.sync = function(store, options = {}) {
+    let moduleName = options.moduleName || 'shop';
 
     store.registerModule(moduleName, {
 
@@ -11,24 +9,44 @@ exports.sync = function(store, options) {
         // actions
         //
         actions: {
-            addToCart: function(context, inventoryId, quantity) {
-                return ShopRepository.addToCart(inventoryId, quantity).then(response => {
-                    context.commit('setCartItem', response.data);
+            addToCart(context, { inventoryId, quantity }) {
+                return new Promise(resolve => {
+                    ShopRepository.addToCart(inventoryId, quantity).then(response => {
+                        context.dispatch('refreshCart').then(resolve);
+                    });
                 });
             },
+            refreshCart(context) {
+                return ShopRepository.getCart().then(response => {
+                    context.commit('updateCart', response.data);
+                });
+            }
+        },
+
+        //
+        // getters
+        //
+        getters: {
+            itemsInCart(state, getters) {
+                if (typeof state.cart !== 'object' || ! Array.isArray(state.cart.items)) {
+                    return 0;
+                }
+
+                return state.cart.items.reduce((a, b) => a + b.quantity, 0);
+            }
         },
 
         //
         // mutations
         //
         mutations: {
-            setCartItem: function(context, data) {
-                var item = context.cart.items.find(function(item) {
-                    return item.id == data.id;
-                });
-
-                if (! item || data.updated_at > item.updated_at) {
-                    context.cart.items.push(data);
+            updateCart(state, cart) {
+                if (
+                    typeof state.cart !== 'object' ||
+                    typeof state.cart.update_count !== 'number' ||
+                    state.cart.update_count < cart.update_count
+                ) {
+                    state.cart = cart;
                 }
             },
         },
@@ -42,7 +60,7 @@ exports.sync = function(store, options) {
         // state
         //
         state: {
-            cart: {
+            cart: options.cart || {
                 items: [],
             },
         },
