@@ -28,6 +28,14 @@ exports.sync = function(store, options = {}) {
                     });
                 });
             },
+            updateQuantity(context, { inventoryId, quantity }) {
+                return new Promise(resolve => {
+                    ShopRepository.updateQuantity(inventoryId, quantity).then(response => {
+                        context.commit('updateInventory', response.data);
+                        resolve(response.data);
+                    });
+                });
+            },
         },
 
         //
@@ -35,14 +43,38 @@ exports.sync = function(store, options = {}) {
         //
         getters: {
             cartIsEmpty(state, getters) {
-                return getters.itemsInCart <= 0;
+                return getters.itemCount <= 0;
             },
-            itemsInCart(state, getters) {
+            cartTotal(state, getters) {
                 if (typeof state.cart !== 'object' || ! Array.isArray(state.cart.items)) {
                     return 0;
                 }
 
-                return state.cart.items.reduce((a, b) => a + b.quantity, 0);
+                return state.cart.items.reduce((a, b) => {
+                    if (
+                        typeof b !== 'object' ||
+                        typeof b.quantity !== 'number' ||
+                        typeof b.product !== 'object' ||
+                        typeof b.product.base_price !== 'number'
+                    ) {
+                        return 0;
+                    }
+
+                    return a + (b.quantity * b.product.base_price);
+                }, 0);
+            },
+            itemCount(state, getters) {
+                if (typeof state.cart !== 'object' || ! Array.isArray(state.cart.items)) {
+                    return 0;
+                }
+
+                return state.cart.items.reduce((a, b) => {
+                    if (typeof b !== 'object' || typeof b.quantity !== 'number') {
+                        return 0;
+                    }
+
+                    return a + b.quantity;
+                }, 0);
             }
         },
 
@@ -50,6 +82,15 @@ exports.sync = function(store, options = {}) {
         // mutations
         //
         mutations: {
+            updateInventory(state, item) {
+                let existingItem = state.cart.items.find(cartItem => cartItem.id == item.id);
+
+                if (existingItem) {
+                    state.cart.items[state.cart.items.indexOf(existingItem)] = Object.assign(existingItem, item);
+                } else {
+                    state.cart.items.push(item);
+                }
+            },
             updateCart(state, cart) {
                 if (
                     typeof state.cart !== 'object' ||

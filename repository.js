@@ -103,7 +103,6 @@ module.exports = {
      * @return {Promise}
      */
     removeFromCart: function(itemId) {
-        console.log(itemId);
         return axios.delete(this.host + '/api/bedard/shop/cart/item', {
             data: {
                 itemId,
@@ -112,5 +111,17 @@ module.exports = {
                 'Content-Type': 'application/json',
             },
         });
-    }
+    },
+
+    /**
+     * Update an item quantity
+     *
+     * @param  {Number}     inventoryId
+     * @param  {Number}     quantity
+     * @return {Promise}
+     */
+    updateQuantity: function(inventoryId, quantity) {
+        console.log (inventoryId, quantity);
+        return axios.patch(this.host + '/api/bedard/shop/cart/item', { inventoryId, quantity });
+    },
 };
